@@ -13,20 +13,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { SignUpValidationSchema } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import {
   useCreateUserAccountMutation,
   useSignInAccountMutation,
 } from "@/lib/react-query/queryAndMutations";
+import { useUserContext } from "@/context/AuthContext";
 
 const SignUpForm = () => {
   const { toast } = useToast();
+  const {checkAuthUser,isLoading:isUserLoading } = useUserContext();
+  const navigate = useNavigate()
+
   // mutation to create account and store in session
-  const { mutateAsync: createUserAccount, isLoading: isCreatingUserAccount } =
+  const { mutateAsync: createUserAccount, isPending: isCreatingUserAccount } =
     useCreateUserAccountMutation();
   // mutation to signin from session
-  const { mutateAsync: signInAccount, isLoading: isSigningIn } =  useSignInAccountMutation();
+  const { mutateAsync: signInAccount, isPending: isSigningIn } =  useSignInAccountMutation();
   // 1. Define your form.
 
   const form = useForm<z.infer<typeof SignUpValidationSchema>>({
@@ -44,15 +48,30 @@ const SignUpForm = () => {
     const newUserCreate = await createUserAccount(values);
     if (!newUserCreate) {
       return toast({
+        variant:"destructive",
         title: "Sign Up failed. Please try again",
       });
     }
     const session  =  await signInAccount({email:values.email,password:values.password})
     if (!session) {
       return toast({
+        variant:"destructive",
         title: "Sign Up failed. Please try again",
       });
     }
+
+    const isLoggedIn =  await checkAuthUser();
+
+    if(isLoggedIn) {
+      form.reset();
+      navigate('/')
+    }else {
+      return toast({
+        variant:"destructive",
+        title: "Sign Up failed. Please try again",
+      });
+    }
+
     console.log(newUserCreate);
   }
 
@@ -125,7 +144,7 @@ const SignUpForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary ">
-            {isLoading ? (
+            {isCreatingUserAccount ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>

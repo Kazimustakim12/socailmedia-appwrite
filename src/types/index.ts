@@ -52,6 +52,6 @@ export type INavLink = {
     isLoading: boolean;
     setUser: React.Dispatch<React.SetStateAction<IUser>>;
     isAuthenticated: boolean;
-    setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
-    checkAuthUSer: () => Promise<Boolean>;
+    setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+    checkAuthUser: () => Promise<Boolean>;
   };
