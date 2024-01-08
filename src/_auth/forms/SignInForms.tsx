@@ -43,7 +43,7 @@ const SignInForm = () => {
     });
     if (!session) {
       return toast({
-        variant:"destructive",
+       variant: "destructive",
         title: "Sign Up failed. Please try again",
       });
     }
