@@ -49,7 +49,7 @@ export type INewUser = {
 
 export type IContextType = {
   user: IUser;
-  isLoading: string;
+  isLoading: boolean;
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
   isAuthenticated: boolean;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
