@@ -1,9 +1,82 @@
-import React from 'react'
+import React, { useEffect } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Button } from "../ui/button";
+import { useSignOutAccountMutation } from "@/lib/react-query/queryAndMutations";
+import { useUserContext } from "@/context/AuthContext";
+import { sidebarLinks } from "@/constants";
+import { INavLink } from "@/types";
 
 const LeftSidebar = () => {
-  return (
-    <div>LeftSidebar</div>
-  )
-}
+  const { mutate: signOutAccount, isSuccess } = useSignOutAccountMutation();
+  const navigate = useNavigate();
+  const { user } = useUserContext();
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (isSuccess) {
+      navigate(0);
+    }
+  }, [isSuccess]);
 
-export default LeftSidebar
+  return (
+    <nav className="leftsidebar">
+      <div className="flex flex-col gap-11 justify-center">
+        <Link to="/" className="flex gap-3 items-center ">
+          <img
+            src="/public/assets/images/logo.svg"
+            alt="logo"
+            width={170}
+            height={36}
+          />
+        </Link>
+        <Link to={`/profile/${user.id}`} className="flex gap-3 items-center">
+          <img
+            src={user.imageUrl || "/public/assets/images/profile.png"}
+            className="w-14 h-14 rounded-full"
+            alt="profile"
+          />
+          <div className="flex flex-col">
+            <p className="body-bold ">{user.name}</p>
+            <p className=" text-light-3 small-regular">@{user.username}</p>
+          </div>
+        </Link>
+        <ul className="flex flex-col gap-6">
+          {sidebarLinks.map((link: INavLink) => {
+            const isActive = pathname === link.route;
+            return (
+              <li
+                key={link.label}
+                className={`leftsidebar-link group ${
+                  isActive && "bg-primary-500"
+                }`}
+              >
+                <NavLink
+                  to={link.route}
+                  className=" flex gap-4 items-center p-4"
+                >
+                  <img
+                    src={link.imgURL}
+                    alt={link.label}
+                    className={`group-hover:invert-white ${
+                      isActive && "invert-white"
+                    } `}
+                  />
+                  {link.label}
+                </NavLink>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <Button
+        variant="ghost"
+        className="shad-button_ghost"
+        onClick={() => signOutAccount()}
+      >
+        <img src="/public/assets/icons/logout.svg" alt="logout" />
+        <p className="small-medium lg:base-medium">Logout</p>
+      </Button>
+    </nav>
+  );
+};
+
+export default LeftSidebar;
