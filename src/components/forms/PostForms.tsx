@@ -19,14 +19,24 @@ import { useUserContext } from "@/context/AuthContext";
 // import { toast } from "../ui/use-toast";
 import { useToast } from "../ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useCreatePost } from "@/lib/react-query/queryAndMutations";
+import {
+  useCreatePost,
+  useUpdatePost,
+} from "@/lib/react-query/queryAndMutations";
+import Loader from "../shared/Loader";
 
 type PostFormProps = {
   post?: Models.Document;
+  action: "create" | "update";
 };
 
-const PostForms = ({ post }: PostFormProps) => {
-  const { mutateAsync: createPost } = useCreatePost();
+const PostForms = ({ post, action }: PostFormProps) => {
+  const { mutateAsync: createPost, isPending: isLoadingCreate } =
+    useCreatePost();
+
+  const { mutateAsync: updatePost, isPending: isLoadingUpdate } =
+    useUpdatePost();
+
   const { user } = useUserContext();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -43,8 +53,24 @@ const PostForms = ({ post }: PostFormProps) => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof CreatPostValidation>) {
+    if (post && action === "update") {
+      const updatedPost = await updatePost({
+        ...values,
+        postId: post.$id,
+        imageId: post?.imageId,
+        imageUrl: post?.imageUrl,
+      });
+      if (!updatedPost) {
+        toast({
+          title: "plese try again",
+        });
+      }
+      return navigate(`/posts/${post.$id}`);
+    }
+
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+
     const newPost = await createPost({
       ...values,
       userId: user.id,
@@ -57,11 +83,14 @@ const PostForms = ({ post }: PostFormProps) => {
     navigate("/");
     console.log(values);
   }
+
+  console.log(post, "post form ");
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col  gap-9 w-full  max-w-sxl"
+        className="flex flex-col  gap-9 w-full  max-w-5xl"
       >
         <FormField
           control={form.control}
@@ -132,8 +161,13 @@ const PostForms = ({ post }: PostFormProps) => {
           <Button type="button" className="shad-button_dark_4">
             Cancel
           </Button>
-          <Button type="submit" className="shad-button_primary ">
-            Submit
+          <Button
+            type="submit"
+            className="shad-button_primary "
+            disabled={isLoadingUpdate || isLoadingCreate}
+          >
+            {isLoadingCreate || (isLoadingUpdate && <Loader />)}
+            {action} post
           </Button>
         </div>
       </form>

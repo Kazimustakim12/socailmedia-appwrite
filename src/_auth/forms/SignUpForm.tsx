@@ -23,14 +23,15 @@ import { useUserContext } from "@/context/AuthContext";
 
 const SignUpForm = () => {
   const { toast } = useToast();
-  const {checkAuthUser,isLoading:isUserLoading } = useUserContext();
-  const navigate = useNavigate()
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+  const navigate = useNavigate();
 
   // mutation to create account and store in session
   const { mutateAsync: createUserAccount, isPending: isCreatingUserAccount } =
     useCreateUserAccountMutation();
   // mutation to signin from session
-  const { mutateAsync: signInAccount, isPending: isSigningIn } =  useSignInAccountMutation();
+  const { mutateAsync: signInAccount, isPending: isSigningIn } =
+    useSignInAccountMutation();
   // 1. Define your form.
 
   const form = useForm<z.infer<typeof SignUpValidationSchema>>({
@@ -48,26 +49,29 @@ const SignUpForm = () => {
     const newUserCreate = await createUserAccount(values);
     if (!newUserCreate) {
       return toast({
-        variant:"destructive",
+        variant: "destructive",
         title: "Sign Up failed. Please try again",
       });
     }
-    const session  =  await signInAccount({email:values.email,password:values.password})
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    });
     if (!session) {
       return toast({
-        variant:"destructive",
+        variant: "destructive",
         title: "Sign Up failed. Please try again",
       });
     }
 
-    const isLoggedIn =  await checkAuthUser();
+    const isLoggedIn = await checkAuthUser();
 
-    if(isLoggedIn) {
+    if (isLoggedIn) {
       form.reset();
-      navigate('/')
-    }else {
+      navigate("/");
+    } else {
       return toast({
-        variant:"destructive",
+        variant: "destructive",
         title: "Sign Up failed. Please try again",
       });
     }
@@ -78,7 +82,7 @@ const SignUpForm = () => {
   return (
     <Form {...form}>
       <div className="sm:w-420 flex-center flex-col">
-        <img src="/public/assets/images/logo.svg" alt="logo" />
+        <img src="assets/images/logo.svg" alt="logo" />
 
         <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
           Create a new account

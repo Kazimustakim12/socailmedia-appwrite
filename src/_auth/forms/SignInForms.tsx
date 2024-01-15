@@ -23,8 +23,7 @@ const SignInForm = () => {
   const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
   const navigate = useNavigate();
   // mutation to signin from session
-  const { mutateAsync: signInAccount,  } =
-    useSignInAccountMutation();
+  const { mutateAsync: signInAccount } = useSignInAccountMutation();
   // 1. Define your form.
 
   const form = useForm<z.infer<typeof SignInValidationSchema>>({
@@ -43,7 +42,7 @@ const SignInForm = () => {
     });
     if (!session) {
       return toast({
-       variant: "destructive",
+        variant: "destructive",
         title: "Sign Up failed. Please try again",
       });
     }
@@ -55,7 +54,7 @@ const SignInForm = () => {
       navigate("/");
     } else {
       return toast({
-        variant:"destructive",
+        variant: "destructive",
         title: "Sign Up failed. Please try again",
       });
     }
@@ -64,7 +63,7 @@ const SignInForm = () => {
   return (
     <Form {...form}>
       <div className="sm:w-420 flex-center flex-col">
-        <img src="/public/assets/images/logo.svg" alt="logo" />
+        <img src="assets/images/logo.svg" alt="logo" />
 
         <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
           Login to your account
