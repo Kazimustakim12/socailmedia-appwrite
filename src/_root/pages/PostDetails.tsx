@@ -2,16 +2,27 @@ import Loader from "@/components/shared/Loader";
 import PostStats from "@/components/shared/PostStats";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
-import { useGetPostById } from "@/lib/react-query/queryAndMutations";
+import {
+  useDeletePost,
+  useGetPostById,
+} from "@/lib/react-query/queryAndMutations";
 import { multiFormatDateString } from "@/lib/utils";
 import { Link, useParams } from "react-router-dom";
 
 const PostDetails = () => {
   const { id } = useParams();
   const { data: post, isPending } = useGetPostById(id || "");
+  const { mutateAsync: deletePost } = useDeletePost();
   const { user } = useUserContext();
 
-  const handleDeletePost = () => {};
+  const handleDeletePost = () => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      console.log(
+        deletePost({ postId: id || "", imageId: post?.imageId }),
+        "deletPost"
+      );
+    }
+  };
   return (
     <div className="post_details-container">
       {isPending ? (
