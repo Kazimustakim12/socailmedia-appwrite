@@ -10,6 +10,7 @@ import {
   createUserAccount,
   deletePost,
   deleteSavePost,
+  getAllUser,
   getCurrentUser,
   getInfinitePosts,
   getPostById,
@@ -188,5 +189,12 @@ export const useSearchPosts = (searchTerm: string) => {
     queryKey: [QUERY_KEYS.SEARCH_POSTS, searchTerm],
     queryFn: () => searchPosts(searchTerm),
     enabled: !!searchTerm,
+  });
+};
+
+export const useGetAllUsers = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_ALL_USERS],
+    queryFn: () => getAllUser(),
   });
 };

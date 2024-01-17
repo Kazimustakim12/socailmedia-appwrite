@@ -86,6 +86,20 @@ export async function getCurrentUser() {
   }
 }
 
+//=============================== GET ALL USER ========
+export async function getAllUser() {
+  try {
+    const allUsers = await database.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId
+    );
+
+    if (!allUsers) throw Error;
+    return allUsers;
+  } catch (error) {
+    console.log(error);
+  }
+}
 // ============================== DELETE FILE
 export async function deleteFile(fileId: string) {
   try {
@@ -97,7 +111,7 @@ export async function deleteFile(fileId: string) {
   }
 }
 
-// ============================== DELETE FILE
+// ============================== UPLOAD FILE
 export async function uploadFile(file: File) {
   try {
     const uploadedFile = await storage.createFile(
