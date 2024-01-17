@@ -12,7 +12,7 @@ import {
 } from "@/lib/react-query/queryAndMutations";
 
 const Explore = () => {
-  const { ref, inview } = useInView();
+  const { ref, inView } = useInView();
   const { data: posts, fetchNextPage, hasNextPage } = useGetPosts();
   const [searchValue, setSearchValue] = useState("");
   const debounceValue = useDebounce(searchValue, 500);
@@ -20,10 +20,10 @@ const Explore = () => {
     useSearchPosts(debounceValue);
   console.log(hasNextPage);
   useEffect(() => {
-    if (inview && !searchValue) {
+    if (inView && !searchValue) {
       fetchNextPage();
     }
-  }, [inview, searchValue, fetchNextPage, hasNextPage]);
+  }, [inView, searchValue, fetchNextPage, hasNextPage]);
   if (!posts) {
     return (
       <div className="flex-center w-full h-full">
